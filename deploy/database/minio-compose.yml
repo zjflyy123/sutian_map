@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+    # 如果需要进入xtreme 的管理后台，修改分类及属性，需要开启 minio 
+    minio:
+        image: ${MINIO_IMAGE}
+        container_name: sutian-minio
+        ports:
+            - ${MINIO_HOST_PORT}:9000
+            - ${MINIO_WEB_PORT}:9090
+        command: server /data  --console-address '0.0.0.0:9090' -address ':9000'
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+            MINIO_DEFAULT_BUCKETS: x1-community:download
+        restart: always
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+        networks:
+            - sutian-data
+        env_file:
+            - ${ENV}
+        volumes:
+            - ${DATABASE_DIR}/minio/data:/data
+            - ${DATABASE_DIR}/minio/config:/root/.minio
+
+
+networks:
+    sutian-data:
+        external: true

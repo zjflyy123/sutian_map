@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  frontend:
+    image: ${NGINX_IMAGE}
+    container_name: sutian-nginx
+    networks:
+    - ${NETWORK}
+    restart: always
+    environment:
+      cpus: 4
+    mem_limit: 4G
+    env_file:
+      - ${ENV}
+    volumes:
+      - ${FRONTEND_FILE_DIR}/conf.d:/etc/nginx/conf.d
+      - ${FRONTEND_FILE_DIR}/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ${FRONTEND_FILE_DIR}/nginx/logs:/var/log/nginx  # 新增日志目录映射
+      - ${FRONTEND_FILE_DIR}/maptool/html:/home/dataplatform/frontend/maptool/html
+      - ${FRONTEND_FILE_DIR}/xtreme3d:/home/dataplatform/frontend/xtreme3d
+    
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+    ports:
+      - ${MAPTOOL_WEB_PORT}:80
+      - ${SERVICE_WEB_PORT}:8090
+networks:
+  sutian-data:
+    external: true

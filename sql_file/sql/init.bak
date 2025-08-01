@@ -1,0 +1,8 @@
+--
+-- 创建数据库，并切换至当前数据库
+--
+CREATE DATABASE `x1_community` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE x1_community;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+SET GLOBAL host_cache_size = 0;

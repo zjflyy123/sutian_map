@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  backend-maptool:
+    image: ${MAPTOOL_IMAGE}
+    container_name: backend-maptool
+    #build:
+    #    context: ./map-tool-server
+    ports:
+      - ${MAPTOOL_PORT}:8082
+    restart: unless-stopped
+    networks:
+      - ${NETWORK}
+    volumes:
+      - ${APP_FILE_DIR}/config/maptool:/app/config
+      - ${MAPTOOL_FRONTEND_DIR}:/home/dataplatform/frontend/maptool/html
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+    env_file:
+      - ${ENV}
+networks:
+  sutian-data:
+    external: true

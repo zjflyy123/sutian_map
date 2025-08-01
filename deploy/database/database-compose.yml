@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+    mysql:
+        image: ${MYSQL_IMAGE}
+        container_name: sutian-mysql
+        networks:
+            - sutian-data
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            TZ: Asia/Shanghai
+        ports:
+            - ${MYSQL_PORT}:3306
+        restart: always
+        env_file:
+            - ${ENV}
+        volumes:
+            #- ${DATABASE_DIR}/mysql:/var/lib/mysql
+            - /database/mysql:/var/lib/mysql   # 因为使用的VM虚拟机，文件在共享文件夹中，这里不支持。所以用系统本地的文件夹
+            - ${SQL_FILE_DIR}/sql:/docker-entrypoint-initdb.d/
+
+    redis:
+        image: ${REDIS_IMAGE}
+        container_name: sutian-redis
+        networks:
+            - sutian-data
+        restart: always
+        ports:
+            - ${REDIS_PORT}:6379
+        command:
+            [
+                "redis-server",
+                "--appendonly",
+                "yes"
+            ]
+        env_file:
+            - ${ENV}
+        volumes:
+            - ${DATABASE_DIR}/redis/data:/data
+            - /etc/localtime:/etc/localtime
+            - /etc/timezone:/etc/timezone
+
+    postgres:
+        image: ${POSTGRES_IMAGE}
+        container_name: sutian-postgres
+        networks:
+            - sutian-data
+        environment:
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+            - ${POSTGRES_PORT}:5432
+        restart: always
+        env_file:
+            - ${ENV}
+        volumes:
+            #- ${DATABASE_DIR}/postgresql:/var/lib/postgresql/data
+            - /database/postgresql:/var/lib/postgresql/data  # 因为使用的VM虚拟机，文件在共享文件夹中，这里不支持。所以用系统本地的文件夹
+            - ${SQL_FILE_DIR}/pgsql:/docker-entrypoint-initdb.d
+            - /etc/localtime:/etc/localtime
+            - /etc/timezone:/etc/timezone
+
+networks:
+    sutian-data:
+        external: true

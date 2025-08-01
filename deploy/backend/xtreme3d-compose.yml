@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  backend-xtreme3d:
+    image: ${XTREME3D_IMAGE}
+    container_name: backend-xtreme3d
+    ports:
+      - ${XTREME3D_PORT}:8080
+    restart: unless-stopped
+    networks:
+      - ${NETWORK}
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - ${APP_FILE_DIR}/config/xtreme3d:/app/config
+    env_file:
+      - ${ENV}
+
+networks:
+  sutian-data:
+    external: true
